@@ -64,14 +64,15 @@
         .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
         .btn-success { background: var(--success); color: #000; width: 100%; }
         .btn-danger { background: var(--danger); color: #fff; width: 100%; }
+        .btn-ghost { background: none; color: var(--danger); border: 1px solid var(--danger); }
         .btn-sm { padding: 8px 14px; font-size: 13px; }
         .badge {
             display: inline-block; padding: 3px 10px; border-radius: 6px;
             font-size: 12px; font-weight: 600; margin-bottom: 6px;
         }
-        .badge-push { background: rgba(255,107,74,.15); color: var(--push); }
-        .badge-pull { background: rgba(74,255,184,.15); color: var(--pull); }
-        .badge-legs { background: rgba(184,74,255,.15); color: var(--legs); }
+        .badge-push   { background: rgba(255,107,74,.15); color: var(--push); }
+        .badge-pull   { background: rgba(74,255,184,.15); color: var(--pull); }
+        .badge-legs   { background: rgba(184,74,255,.15); color: var(--legs); }
         .badge-travel { background: rgba(255,208,74,.15); color: var(--travel); }
         .section-label {
             font-size: 12px; font-weight: 600; text-transform: uppercase;
@@ -111,6 +112,11 @@
             text-align: center;
         }
         .form-input:focus { outline: none; border-color: var(--accent); }
+        .form-select {
+            width: 100%; background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; padding: 10px; font-size: 15px; color: var(--text);
+        }
+        .form-select:focus { outline: none; border-color: var(--accent); }
         .prev-best { font-size: 12px; color: var(--text-muted); text-align: right; }
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
         .stat-card { background: var(--surface); border-radius: 10px; padding: 14px; border: 1px solid var(--border); }
@@ -151,6 +157,25 @@
         .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
         .empty-icon { font-size: 48px; margin-bottom: 16px; }
         .empty-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+        /* Edit exercise list */
+        .edit-ex-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 0; border-bottom: 1px solid var(--border);
+        }
+        .edit-ex-row:last-child { border-bottom: none; }
+        .edit-ex-info { flex: 1; }
+        .edit-ex-name { font-size: 15px; font-weight: 500; }
+        .edit-ex-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .delete-btn {
+            width: 32px; height: 32px; border-radius: 8px; border: none;
+            background: rgba(255,74,74,.15); color: var(--danger);
+            font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .add-ex-form { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px; display: none; }
+        .add-ex-form.open { display: block; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        /* Flex utils */
         .flex { display: flex; }
         .items-center { align-items: center; }
         .justify-between { justify-content: space-between; }
@@ -191,7 +216,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── PROGRAMMES ──────────────────────────────────────────────────────────────
+// ─── PROGRAMMES (defaults) ────────────────────────────────────────────────────
 
 const PROGRAMMES = {
   main: {
@@ -201,71 +226,71 @@ const PROGRAMMES = {
       {
         name: 'Push A', focus: 'Chest Focus', type: 'push',
         exercises: [
-          { name: 'Barbell Bench Press',      sets: 4, reps: '8',      kind: 'weighted', defaultWeight: 60,  note: 'Your current benchmark. Add 2.5kg when you hit 4×8 cleanly.' },
-          { name: 'Incline Dumbbell Press',   sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 20 },
-          { name: 'Dumbbell Lateral Raises',  sets: 4, reps: '15',     kind: 'weighted', defaultWeight: 8,   note: 'Key for shoulder width — slow and controlled.' },
-          { name: 'Cable Flyes / Pec Deck',   sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 25 },
-          { name: 'Tricep Rope Pushdown',     sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 20 },
-          { name: 'Overhead Tricep Extension',sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 15 },
+          { name: 'Barbell Bench Press',       sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 60,  note: 'Your current benchmark. Add 2.5kg when you hit 4×8 cleanly.' },
+          { name: 'Incline Dumbbell Press',    sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 20 },
+          { name: 'Dumbbell Lateral Raises',   sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 8,   note: 'Key for shoulder width — slow and controlled.' },
+          { name: 'Overhead Press Machine',    sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 25 },
+          { name: 'Tricep Rope Pushdown',      sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 20 },
+          { name: 'Overhead Tricep Extension', sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 15 },
         ]
       },
       {
         name: 'Pull A', focus: 'Back Width & Pull-ups', type: 'pull',
         exercises: [
-          { name: 'Pull-ups',                 sets: 4, reps: 'max',    kind: 'bodyweight', note: 'Currently 8 clean reps — aim to add 1 rep per cycle.' },
-          { name: 'Lat Pulldown',             sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 50 },
-          { name: 'Seated Cable Row',         sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 45 },
-          { name: 'Face Pulls',               sets: 3, reps: '15',     kind: 'weighted', defaultWeight: 20, note: 'Protects shoulder health and builds rear delts.' },
-          { name: 'Barbell Curl',             sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 25 },
-          { name: 'Hammer Curls',             sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 10 },
+          { name: 'Pull-ups',                  sets: 4, reps: 'max',     kind: 'bodyweight', note: 'Currently 8 clean reps — aim to add 1 rep per cycle.' },
+          { name: 'Lat Pulldown',              sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 50 },
+          { name: 'Seated Cable Row',          sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 45 },
+          { name: 'Face Pulls',                sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 20, note: 'Protects shoulder health and builds rear delts.' },
+          { name: 'Barbell Curl',              sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 25 },
+          { name: 'Hammer Curls',              sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 10 },
         ]
       },
       {
         name: 'Legs A', focus: 'Quads + Abs', type: 'legs',
         exercises: [
-          { name: 'Barbell Back Squat',       sets: 4, reps: '8',      kind: 'weighted', defaultWeight: 60,  note: 'Stay consistent here — this is the key leg builder.' },
-          { name: 'Leg Press',                sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 100 },
-          { name: 'Leg Extension',            sets: 3, reps: '15',     kind: 'weighted', defaultWeight: 40 },
-          { name: 'Romanian Deadlift',        sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 50 },
-          { name: 'Calf Raises',              sets: 4, reps: '15',     kind: 'weighted', defaultWeight: 60 },
-          { name: 'Hanging Leg Raises',       sets: 3, reps: '15',     kind: 'bodyweight', note: 'Keep legs straight for full core engagement.' },
-          { name: 'Plank',                    sets: 3, reps: '60s',    kind: 'timed', defaultDuration: 60 },
-          { name: 'Cable Crunch',             sets: 3, reps: '15',     kind: 'weighted', defaultWeight: 25 },
+          { name: 'Barbell Back Squat',        sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 60,  note: 'Stay consistent here — this is the key leg builder.' },
+          { name: 'Leg Press',                 sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 100 },
+          { name: 'Leg Extension',             sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 40 },
+          { name: 'Romanian Deadlift',         sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 50 },
+          { name: 'Calf Raises',               sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 60 },
+          { name: 'Hanging Leg Raises',        sets: 3, reps: '15',      kind: 'bodyweight', note: 'Keep legs straight for full core engagement.' },
+          { name: 'Plank',                     sets: 3, reps: '60s',     kind: 'timed',      defaultDuration: 60 },
+          { name: 'Cable Crunch',              sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 25 },
         ]
       },
       {
         name: 'Push B', focus: 'Shoulder Focus', type: 'push',
         exercises: [
-          { name: 'Barbell Overhead Press',   sets: 4, reps: '8',      kind: 'weighted', defaultWeight: 40,  note: 'Primary shoulder mass builder. Drive this up over time.' },
-          { name: 'Incline Barbell Press',    sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 50 },
-          { name: 'Dumbbell Lateral Raises',  sets: 4, reps: '15',     kind: 'weighted', defaultWeight: 8 },
-          { name: 'Cable Lateral Raises',     sets: 3, reps: '15',     kind: 'weighted', defaultWeight: 10,  note: 'Constant tension — great for the final pump.' },
-          { name: 'Dumbbell Front Raises',    sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 8 },
-          { name: 'Tricep Dips',              sets: 3, reps: '12',     kind: 'bodyweight' },
+          { name: 'Barbell Overhead Press',    sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 40,  note: 'Primary shoulder mass builder. Drive this up over time.' },
+          { name: 'Incline Barbell Press',     sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 50 },
+          { name: 'Dumbbell Lateral Raises',   sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 8 },
+          { name: 'Cable Lateral Raises',      sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 10, note: 'Constant tension — great for the final pump.' },
+          { name: 'Dumbbell Front Raises',     sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 8 },
+          { name: 'Tricep Dips',               sets: 3, reps: '12',      kind: 'bodyweight' },
         ]
       },
       {
         name: 'Pull B', focus: 'Back Thickness', type: 'pull',
         exercises: [
-          { name: 'Barbell Row',              sets: 4, reps: '8',      kind: 'weighted', defaultWeight: 50,  note: 'Keep back flat, pull to lower chest.' },
-          { name: 'Seated Cable Row',         sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 45 },
-          { name: 'Wide Grip Lat Pulldown',   sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 50 },
-          { name: 'Rear Delt Flies',          sets: 3, reps: '15',     kind: 'weighted', defaultWeight: 10,  note: 'Essential for rounded, broad shoulders.' },
-          { name: 'Preacher Curl',            sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 20 },
-          { name: 'Incline Dumbbell Curl',    sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 8 },
+          { name: 'Barbell Row',               sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 50,  note: 'Keep back flat, pull to lower chest.' },
+          { name: 'Seated Cable Row',          sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 45 },
+          { name: 'Wide Grip Lat Pulldown',    sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 50 },
+          { name: 'Rear Delt Flies',           sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 10, note: 'Essential for rounded, broad shoulders.' },
+          { name: 'Preacher Curl',             sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 20 },
+          { name: 'Incline Dumbbell Curl',     sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 8 },
         ]
       },
       {
         name: 'Legs B', focus: 'Posterior Chain + Abs', type: 'legs',
         exercises: [
-          { name: 'Romanian Deadlift',        sets: 4, reps: '8',      kind: 'weighted', defaultWeight: 60,  note: 'Feel the hamstring stretch at the bottom — control the descent.' },
-          { name: 'Bulgarian Split Squat',    sets: 3, reps: '10 each',kind: 'weighted', defaultWeight: 16,  note: 'Hard but highly effective — best single-leg exercise.' },
-          { name: 'Leg Curl',                 sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 40 },
-          { name: 'Leg Press',                sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 100 },
-          { name: 'Standing Calf Raises',     sets: 4, reps: '15',     kind: 'weighted', defaultWeight: 60 },
-          { name: 'Ab Wheel Rollout',         sets: 3, reps: '10',     kind: 'bodyweight', note: 'Go slow — one of the best core exercises.' },
-          { name: 'Decline Sit-ups',          sets: 3, reps: '15',     kind: 'bodyweight' },
-          { name: 'Russian Twists',           sets: 3, reps: '20 total',kind: 'bodyweight' },
+          { name: 'Romanian Deadlift',         sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 60,  note: 'Feel the hamstring stretch at the bottom — control the descent.' },
+          { name: 'Bulgarian Split Squat',     sets: 3, reps: '10 each', kind: 'weighted',   defaultWeight: 16,  note: 'Hard but highly effective — best single-leg exercise.' },
+          { name: 'Leg Curl',                  sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 40 },
+          { name: 'Leg Press',                 sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 100 },
+          { name: 'Standing Calf Raises',      sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 60 },
+          { name: 'Ab Wheel Rollout',          sets: 3, reps: '10',      kind: 'bodyweight', note: 'Go slow — one of the best core exercises.' },
+          { name: 'Decline Sit-ups',           sets: 3, reps: '15',      kind: 'bodyweight' },
+          { name: 'Russian Twists',            sets: 3, reps: '20 total',kind: 'bodyweight' },
         ]
       },
     ]
@@ -277,43 +302,43 @@ const PROGRAMMES = {
       {
         name: 'Push', focus: 'Chest & Shoulders', type: 'push',
         exercises: [
-          { name: 'Barbell Bench Press',      sets: 4, reps: '8',      kind: 'weighted', defaultWeight: 60 },
-          { name: 'Barbell Overhead Press',   sets: 3, reps: '8',      kind: 'weighted', defaultWeight: 40 },
-          { name: 'Incline Dumbbell Press',   sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 20 },
-          { name: 'Dumbbell Lateral Raises',  sets: 4, reps: '15',     kind: 'weighted', defaultWeight: 8 },
-          { name: 'Tricep Pushdown',          sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 20 },
+          { name: 'Barbell Bench Press',       sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 60 },
+          { name: 'Barbell Overhead Press',    sets: 3, reps: '8',       kind: 'weighted',   defaultWeight: 40 },
+          { name: 'Incline Dumbbell Press',    sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 20 },
+          { name: 'Dumbbell Lateral Raises',   sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 8 },
+          { name: 'Tricep Pushdown',           sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 20 },
         ]
       },
       {
         name: 'Pull', focus: 'Back & Biceps', type: 'pull',
         exercises: [
-          { name: 'Pull-ups',                 sets: 4, reps: 'max',    kind: 'bodyweight' },
-          { name: 'Barbell Row',              sets: 4, reps: '8',      kind: 'weighted', defaultWeight: 50 },
-          { name: 'Lat Pulldown',             sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 50 },
-          { name: 'Face Pulls',               sets: 3, reps: '15',     kind: 'weighted', defaultWeight: 20 },
-          { name: 'Barbell Curl',             sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 25 },
+          { name: 'Pull-ups',                  sets: 4, reps: 'max',     kind: 'bodyweight' },
+          { name: 'Barbell Row',               sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 50 },
+          { name: 'Lat Pulldown',              sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 50 },
+          { name: 'Face Pulls',                sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 20 },
+          { name: 'Barbell Curl',              sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 25 },
         ]
       },
       {
         name: 'Legs + Abs', focus: 'Full Lower Body', type: 'legs',
         exercises: [
-          { name: 'Barbell Back Squat',       sets: 4, reps: '8',      kind: 'weighted', defaultWeight: 60 },
-          { name: 'Romanian Deadlift',        sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 60 },
-          { name: 'Leg Press',                sets: 3, reps: '12',     kind: 'weighted', defaultWeight: 100 },
-          { name: 'Calf Raises',              sets: 4, reps: '15',     kind: 'weighted', defaultWeight: 60 },
-          { name: 'Hanging Leg Raises',       sets: 3, reps: '15',     kind: 'bodyweight' },
-          { name: 'Plank',                    sets: 3, reps: '60s',    kind: 'timed', defaultDuration: 60 },
+          { name: 'Barbell Back Squat',        sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 60 },
+          { name: 'Romanian Deadlift',         sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 60 },
+          { name: 'Leg Press',                 sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 100 },
+          { name: 'Calf Raises',               sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 60 },
+          { name: 'Hanging Leg Raises',        sets: 3, reps: '15',      kind: 'bodyweight' },
+          { name: 'Plank',                     sets: 3, reps: '60s',     kind: 'timed',      defaultDuration: 60 },
         ]
       },
       {
         name: 'Upper', focus: 'Full Upper Body', type: 'push',
         exercises: [
-          { name: 'Barbell Overhead Press',   sets: 4, reps: '8',      kind: 'weighted', defaultWeight: 40 },
-          { name: 'Pull-ups',                 sets: 4, reps: 'max',    kind: 'bodyweight' },
-          { name: 'Incline Bench Press',      sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 50 },
-          { name: 'Seated Cable Row',         sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 45 },
-          { name: 'Dumbbell Lateral Raises',  sets: 3, reps: '15',     kind: 'weighted', defaultWeight: 8 },
-          { name: 'Barbell Curl',             sets: 3, reps: '10',     kind: 'weighted', defaultWeight: 25 },
+          { name: 'Barbell Overhead Press',    sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 40 },
+          { name: 'Pull-ups',                  sets: 4, reps: 'max',     kind: 'bodyweight' },
+          { name: 'Incline Bench Press',       sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 50 },
+          { name: 'Seated Cable Row',          sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 45 },
+          { name: 'Dumbbell Lateral Raises',   sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 8 },
+          { name: 'Barbell Curl',              sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 25 },
         ]
       },
     ]
@@ -325,46 +350,46 @@ const PROGRAMMES = {
       {
         name: 'Push', focus: 'Chest, Shoulders & Triceps', type: 'travel',
         exercises: [
-          { name: 'Push-ups',                 sets: 4, reps: 'max',    kind: 'bodyweight', note: 'Full range — chest to floor.' },
-          { name: 'Pike Push-ups',            sets: 3, reps: '12',     kind: 'bodyweight', note: 'Hips high, head toward floor — mimics overhead press.' },
-          { name: 'Diamond Push-ups',         sets: 3, reps: '12',     kind: 'bodyweight', note: 'Tricep focus.' },
-          { name: 'Wide Push-ups',            sets: 3, reps: '15',     kind: 'bodyweight' },
-          { name: 'Tricep Dips (chair/bed)',  sets: 3, reps: '15',     kind: 'bodyweight' },
-          { name: 'Decline Push-ups',         sets: 3, reps: '12',     kind: 'bodyweight', note: 'Feet elevated on bed or chair.' },
+          { name: 'Push-ups',                  sets: 4, reps: 'max',     kind: 'bodyweight', note: 'Full range — chest to floor.' },
+          { name: 'Pike Push-ups',             sets: 3, reps: '12',      kind: 'bodyweight', note: 'Hips high, head toward floor — mimics overhead press.' },
+          { name: 'Diamond Push-ups',          sets: 3, reps: '12',      kind: 'bodyweight', note: 'Tricep focus.' },
+          { name: 'Wide Push-ups',             sets: 3, reps: '15',      kind: 'bodyweight' },
+          { name: 'Tricep Dips (chair/bed)',   sets: 3, reps: '15',      kind: 'bodyweight' },
+          { name: 'Decline Push-ups',          sets: 3, reps: '12',      kind: 'bodyweight', note: 'Feet elevated on bed or chair.' },
         ]
       },
       {
         name: 'Pull', focus: 'Back & Biceps', type: 'travel',
         exercises: [
-          { name: 'Pull-ups',                 sets: 4, reps: 'max',    kind: 'bodyweight', note: 'Parks, playgrounds, hostel frames — always look for a bar.' },
-          { name: 'Chin-ups',                 sets: 3, reps: 'max',    kind: 'bodyweight' },
-          { name: 'Commando Pull-ups',        sets: 3, reps: '8 each', kind: 'bodyweight', note: 'Side-on grip, alternating side each rep.' },
-          { name: 'Inverted Rows (table)',    sets: 3, reps: '15',     kind: 'bodyweight', note: 'Under a sturdy table, body straight, pull chest to edge.' },
-          { name: 'Towel Bicep Curl',         sets: 3, reps: '15',     kind: 'bodyweight', note: 'Loop towel around door handle, lean back, curl.' },
+          { name: 'Pull-ups',                  sets: 4, reps: 'max',     kind: 'bodyweight', note: 'Parks, playgrounds, hostel frames — always look for a bar.' },
+          { name: 'Chin-ups',                  sets: 3, reps: 'max',     kind: 'bodyweight' },
+          { name: 'Commando Pull-ups',         sets: 3, reps: '8 each',  kind: 'bodyweight', note: 'Side-on grip, alternating side each rep.' },
+          { name: 'Inverted Rows (table)',     sets: 3, reps: '15',      kind: 'bodyweight', note: 'Under a sturdy table, body straight, pull chest to edge.' },
+          { name: 'Towel Bicep Curl',          sets: 3, reps: '15',      kind: 'bodyweight', note: 'Loop towel around door handle, lean back, curl.' },
         ]
       },
       {
         name: 'Legs + Abs', focus: 'Full Lower Body', type: 'travel',
         exercises: [
-          { name: 'Bodyweight Squat',         sets: 4, reps: '20',     kind: 'bodyweight' },
+          { name: 'Bodyweight Squat',          sets: 4, reps: '20',      kind: 'bodyweight' },
           { name: 'Bulgarian Split Squat (chair)', sets: 3, reps: '15 each', kind: 'bodyweight', note: 'Back foot on bed — great single-leg strength.' },
-          { name: 'Jump Squats',              sets: 3, reps: '15',     kind: 'bodyweight', note: 'Be mindful of hostel floors!' },
-          { name: 'Glute Bridges',            sets: 3, reps: '20',     kind: 'bodyweight' },
-          { name: 'Calf Raises (step)',       sets: 4, reps: '25',     kind: 'bodyweight', note: 'Edge of a step for full range of motion.' },
-          { name: 'Plank',                    sets: 3, reps: '60s',    kind: 'timed', defaultDuration: 60 },
-          { name: 'Leg Raises',               sets: 3, reps: '20',     kind: 'bodyweight' },
-          { name: 'Mountain Climbers',        sets: 3, reps: '30 total',kind: 'bodyweight' },
+          { name: 'Jump Squats',               sets: 3, reps: '15',      kind: 'bodyweight', note: 'Be mindful of hostel floors!' },
+          { name: 'Glute Bridges',             sets: 3, reps: '20',      kind: 'bodyweight' },
+          { name: 'Calf Raises (step)',        sets: 4, reps: '25',      kind: 'bodyweight', note: 'Edge of a step for full range of motion.' },
+          { name: 'Plank',                     sets: 3, reps: '60s',     kind: 'timed',      defaultDuration: 60 },
+          { name: 'Leg Raises',                sets: 3, reps: '20',      kind: 'bodyweight' },
+          { name: 'Mountain Climbers',         sets: 3, reps: '30 total',kind: 'bodyweight' },
         ]
       },
       {
         name: 'Full Body', focus: 'Conditioning & Strength', type: 'travel',
         exercises: [
-          { name: 'Burpees',                  sets: 3, reps: '10',     kind: 'bodyweight' },
-          { name: 'Push-ups',                 sets: 3, reps: '15',     kind: 'bodyweight' },
-          { name: 'Pull-ups (if available)',  sets: 3, reps: 'max',    kind: 'bodyweight' },
-          { name: 'Reverse Lunges',           sets: 3, reps: '15 each',kind: 'bodyweight' },
-          { name: 'Plank to Push-up',         sets: 3, reps: '10',     kind: 'bodyweight' },
-          { name: 'Hollow Body Hold',         sets: 3, reps: '30s',    kind: 'timed', defaultDuration: 30 },
+          { name: 'Burpees',                   sets: 3, reps: '10',      kind: 'bodyweight' },
+          { name: 'Push-ups',                  sets: 3, reps: '15',      kind: 'bodyweight' },
+          { name: 'Pull-ups (if available)',   sets: 3, reps: 'max',     kind: 'bodyweight' },
+          { name: 'Reverse Lunges',            sets: 3, reps: '15 each', kind: 'bodyweight' },
+          { name: 'Plank to Push-up',          sets: 3, reps: '10',      kind: 'bodyweight' },
+          { name: 'Hollow Body Hold',          sets: 3, reps: '30s',     kind: 'timed',      defaultDuration: 30 },
         ]
       },
     ]
@@ -379,41 +404,68 @@ function getState() {
 }
 function saveState() { localStorage.setItem(SK, JSON.stringify(S)); }
 function mkDefault() {
-  return { programme: 'main', dayIndex: 0, activeSession: null, sessions: [] };
+  return { programme: 'main', dayIndex: 0, activeSession: null, sessions: [], customDays: {} };
 }
 
 let S = getState();
+// Ensure customDays exists on old saves
+if (!S.customDays) S.customDays = {};
+
 let currentView = 'today';
+let editingProg = null;   // which programme key is being edited
+let editingDay  = null;   // which day index is being edited
 let restInterval = null;
 let restSecs = 0;
+
+// Returns the days array for the current (or given) programme,
+// using custom overrides if the user has made any edits.
+function getDays(progKey) {
+  const k = progKey || S.programme;
+  return S.customDays[k] || PROGRAMMES[k].days;
+}
+
+// Deep-copy the default days into customDays so edits don't touch the defaults
+function ensureCustomDays(progKey) {
+  if (!S.customDays[progKey]) {
+    S.customDays[progKey] = JSON.parse(JSON.stringify(PROGRAMMES[progKey].days));
+    saveState();
+  }
+}
 
 // ─── NAVIGATION ──────────────────────────────────────────────────────────────
 
 function navigate(v) {
   currentView = v;
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('nav-' + v).classList.add('active');
+  const navEl = document.getElementById('nav-' + v);
+  if (navEl) navEl.classList.add('active');
   render();
 }
 
 // ─── RENDER ──────────────────────────────────────────────────────────────────
 
 function render() {
-  const titles = { today: 'Today', history: 'History', progress: 'Progress', settings: 'Settings' };
+  const titles = {
+    today: 'Today', history: 'History',
+    progress: 'Progress', settings: 'Settings',
+    'edit-programme': 'Edit Programme', 'edit-day': 'Edit Day'
+  };
   document.getElementById('header-title').textContent = titles[currentView] || '';
   document.getElementById('header-action').innerHTML = '';
   const c = document.getElementById('main-content');
-  if (currentView === 'today')    c.innerHTML = renderToday();
-  if (currentView === 'history')  c.innerHTML = renderHistory();
-  if (currentView === 'progress') c.innerHTML = renderProgress();
-  if (currentView === 'settings') c.innerHTML = renderSettings();
+  if (currentView === 'today')            c.innerHTML = renderToday();
+  if (currentView === 'history')          c.innerHTML = renderHistory();
+  if (currentView === 'progress')         c.innerHTML = renderProgress();
+  if (currentView === 'settings')         c.innerHTML = renderSettings();
+  if (currentView === 'edit-programme')   c.innerHTML = renderEditProgramme();
+  if (currentView === 'edit-day')         c.innerHTML = renderEditDay();
 }
 
 // ─── TODAY ───────────────────────────────────────────────────────────────────
 
 function renderToday() {
-  const prog = PROGRAMMES[S.programme];
-  const day  = prog.days[S.dayIndex % prog.days.length];
+  const days = getDays();
+  const day  = days[S.dayIndex % days.length];
   if (S.activeSession) return renderActiveWorkout(day);
 
   const totalWorkouts = S.sessions.length;
@@ -428,14 +480,14 @@ function renderToday() {
       <div class="stat-card"><div class="stat-value">${thisWeek}</div><div class="stat-label">This Week</div></div>
     </div>` : '';
 
-  const nextDay = prog.days[(S.dayIndex + 1) % prog.days.length];
+  const nextDay = days[(S.dayIndex + 1) % days.length];
 
   return `
     ${statsHtml}
     <div class="mb-12">
       <div class="badge badge-${day.type}">${day.name}</div>
       <div style="font-size:24px;font-weight:700;margin-bottom:4px">${day.focus}</div>
-      <div style="color:var(--text-muted);font-size:14px">${prog.name} · ${day.exercises.length} exercises</div>
+      <div style="color:var(--text-muted);font-size:14px">${PROGRAMMES[S.programme].name} · ${day.exercises.length} exercises</div>
     </div>
     <div class="card mb-12">
       <div class="section-label" style="margin-top:0">Today's Exercises</div>
@@ -509,9 +561,9 @@ function renderSetsLogged(logged, ex) {
 
 function renderLogForm(exIdx, ex, logged) {
   const setNum = logged.length + 1;
-  const lastW = logged.length ? logged[logged.length-1].weight : null;
-  const defW  = lastW ?? getLastWeight(ex.name) ?? ex.defaultWeight ?? 20;
-  const defR  = ex.reps !== 'max' ? ex.reps.split(' ')[0] : '8';
+  const lastW  = logged.length ? logged[logged.length-1].weight : null;
+  const defW   = lastW ?? getLastWeight(ex.name) ?? ex.defaultWeight ?? 20;
+  const defR   = ex.reps !== 'max' ? ex.reps.split(' ')[0] : '8';
 
   if (ex.kind === 'weighted') return `
     <div class="log-form">
@@ -543,8 +595,7 @@ function startWorkout() {
     date: today(), programme: S.programme,
     dayIndex: S.dayIndex, exercises: {}, expandedEx: 0, startTime: Date.now()
   };
-  saveState();
-  render();
+  saveState(); render();
 }
 
 function toggleEx(i) {
@@ -557,8 +608,8 @@ function toggleEx(i) {
 }
 
 function logSet(exIdx) {
-  const prog = PROGRAMMES[S.programme];
-  const day  = prog.days[S.dayIndex % prog.days.length];
+  const days = getDays();
+  const day  = days[S.dayIndex % days.length];
   const ex   = day.exercises[exIdx];
   if (!S.activeSession.exercises[exIdx]) S.activeSession.exercises[exIdx] = [];
 
@@ -588,13 +639,12 @@ function logSet(exIdx) {
     const next = exIdx + 1;
     if (next < day.exercises.length) S.activeSession.expandedEx = next;
   }
-  saveState();
-  render();
+  saveState(); render();
 }
 
 function completeWorkout() {
-  const prog = PROGRAMMES[S.programme];
-  const day  = prog.days[S.dayIndex % prog.days.length];
+  const days = getDays();
+  const day  = days[S.dayIndex % days.length];
   const sess = S.activeSession;
   S.sessions.push({
     date: sess.date, programme: sess.programme,
@@ -603,11 +653,9 @@ function completeWorkout() {
     exercises: day.exercises.map((ex, i) => ({ name: ex.name, sets: sess.exercises[i] || [] }))
   });
   S.activeSession = null;
-  S.dayIndex = (S.dayIndex + 1) % prog.days.length;
-  saveState();
-  stopRestTimer();
-  render();
-  setTimeout(() => showToast('Workout complete! 💪'), 100);
+  S.dayIndex = (S.dayIndex + 1) % days.length;
+  saveState(); stopRestTimer(); render();
+  setTimeout(() => showToast('Workout complete!'), 100);
 }
 
 function confirmAbandon() {
@@ -617,29 +665,26 @@ function confirmAbandon() {
 }
 
 function skipDay() {
-  S.dayIndex = (S.dayIndex + 1) % PROGRAMMES[S.programme].days.length;
+  const days = getDays();
+  S.dayIndex = (S.dayIndex + 1) % days.length;
   saveState(); render();
 }
 
 // ─── REST TIMER ──────────────────────────────────────────────────────────────
 
 function startRestTimer(secs) {
-  stopRestTimer();
-  restSecs = secs;
+  stopRestTimer(); restSecs = secs;
   let el = document.getElementById('rest-timer');
   if (!el) {
     el = document.createElement('div');
-    el.id = 'rest-timer';
-    el.className = 'rest-timer';
+    el.id = 'rest-timer'; el.className = 'rest-timer';
     el.innerHTML = `<div><div class="timer-label">Rest</div><div class="timer-display" id="timer-disp">1:30</div></div>
       <button class="btn btn-secondary btn-sm" onclick="stopRestTimer()">Done</button>`;
     document.body.appendChild(el);
   }
-  el.classList.remove('hidden');
-  updateTimerDisp();
+  el.classList.remove('hidden'); updateTimerDisp();
   restInterval = setInterval(() => {
-    restSecs--;
-    updateTimerDisp();
+    restSecs--; updateTimerDisp();
     if (restSecs <= 0) { stopRestTimer(); showToast('Rest done — next set!'); }
   }, 1000);
 }
@@ -669,8 +714,9 @@ function renderHistory() {
   return [...S.sessions].reverse().map((s, ri) => {
     const idx  = S.sessions.length - 1 - ri;
     const sets = (s.exercises||[]).reduce((a,e)=>a+(e.sets?e.sets.length:0),0);
-    const prog = PROGRAMMES[s.programme]||PROGRAMMES.main;
-    const day  = prog.days[s.dayIndex % prog.days.length];
+    const prog = PROGRAMMES[s.programme] || PROGRAMMES.main;
+    const days = getDays(s.programme);
+    const day  = days[s.dayIndex % days.length];
     return `
     <div class="history-item" onclick="showDetail(${idx})">
       <div class="flex items-center justify-between">
@@ -689,8 +735,8 @@ function renderHistory() {
 
 function showDetail(idx) {
   const s    = S.sessions[idx];
-  const prog = PROGRAMMES[s.programme]||PROGRAMMES.main;
-  const day  = prog.days[s.dayIndex % prog.days.length];
+  const days = getDays(s.programme);
+  const day  = days[s.dayIndex % days.length];
   let html = `
     <button class="btn btn-secondary btn-sm mb-12" onclick="navigate('history')">← Back</button>
     <div class="mb-12">
@@ -739,7 +785,7 @@ function progressData(name) {
   S.sessions.forEach(s => {
     const ex = (s.exercises||[]).find(e=>e.name===name);
     if (!ex||!ex.sets||!ex.sets.length) return;
-    const best = ex.sets.reduce((b,s2) => score(s2)>score(b)?s2:b, ex.sets[0]);
+    const best = ex.sets.reduce((b,s2)=>score(s2)>score(b)?s2:b, ex.sets[0]);
     out.push({ date: s.date, ...best });
   });
   return out;
@@ -779,8 +825,9 @@ function miniChart(data) {
 // ─── SETTINGS ────────────────────────────────────────────────────────────────
 
 function renderSettings() {
-  const prog = PROGRAMMES[S.programme];
-  const dayIdx = S.dayIndex % prog.days.length;
+  const prog   = PROGRAMMES[S.programme];
+  const days   = getDays();
+  const dayIdx = S.dayIndex % days.length;
   return `
     <div class="section-label" style="margin-top:0">Programme</div>
     ${Object.entries(PROGRAMMES).map(([k,p])=>`
@@ -792,14 +839,22 @@ function renderSettings() {
     <div class="section-label">Current Position</div>
     <div class="card">
       <div style="font-size:15px;font-weight:600">${prog.name}</div>
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Day ${dayIdx+1} of ${prog.days.length} — ${prog.days[dayIdx].name}</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Day ${dayIdx+1} of ${days.length} — ${days[dayIdx].name}</div>
       <div style="display:flex;gap:6px">
-        ${prog.days.map((d,i)=>`
+        ${days.map((d,i)=>`
           <div style="flex:1;text-align:center">
             <div style="font-size:9px;color:var(--text-muted);margin-bottom:3px">${d.name.split(' ').map(w=>w[0]).join('')}</div>
             <div style="height:6px;border-radius:3px;background:${i===dayIdx?'var(--accent)':i<dayIdx?'var(--success)':'var(--border)'}"></div>
           </div>`).join('')}
       </div>
+    </div>
+
+    <div class="section-label">Customise Exercises</div>
+    <div class="card">
+      <div style="font-size:14px;color:var(--text-muted);margin-bottom:12px">
+        Add, remove, or reorder exercises for any day in the current programme.
+      </div>
+      <button class="btn btn-secondary w-full" onclick="openEditProgramme('${S.programme}')">Edit ${prog.name} days →</button>
     </div>
 
     <div class="section-label">Your Starting Stats</div>
@@ -834,6 +889,161 @@ function resetAll() {
   if (confirm('Delete ALL data? This cannot be undone.')) {
     localStorage.removeItem(SK); S = mkDefault(); render(); showToast('Data reset');
   }
+}
+
+// ─── EDIT PROGRAMME ──────────────────────────────────────────────────────────
+
+function openEditProgramme(progKey) {
+  ensureCustomDays(progKey);
+  editingProg = progKey;
+  currentView = 'edit-programme';
+  render();
+}
+
+function renderEditProgramme() {
+  const days = getDays(editingProg);
+  const prog = PROGRAMMES[editingProg];
+  return `
+    <button class="btn btn-secondary btn-sm mb-12" onclick="navigate('settings')">← Back</button>
+    <div style="font-size:20px;font-weight:700;margin-bottom:4px">${prog.name}</div>
+    <div style="font-size:14px;color:var(--text-muted);margin-bottom:16px">Tap a day to edit its exercises</div>
+    ${days.map((d,i) => `
+      <div class="card" style="cursor:pointer" onclick="openEditDay(${i})">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="badge badge-${d.type}" style="margin-bottom:4px">${d.name}</div>
+            <div style="font-size:15px;font-weight:600">${d.focus}</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-top:2px">${d.exercises.length} exercises</div>
+          </div>
+          <div style="color:var(--text-muted);font-size:20px">›</div>
+        </div>
+      </div>`).join('')}`;
+}
+
+function openEditDay(dayIdx) {
+  editingDay = dayIdx;
+  currentView = 'edit-day';
+  render();
+}
+
+function renderEditDay() {
+  const days = getDays(editingProg);
+  const day  = days[editingDay];
+  return `
+    <button class="btn btn-secondary btn-sm mb-12" onclick="currentView='edit-programme';render()">← Back</button>
+    <div class="flex items-center justify-between mb-12">
+      <div>
+        <div class="badge badge-${day.type}" style="margin-bottom:4px">${day.name}</div>
+        <div style="font-size:20px;font-weight:700">${day.focus}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="resetDayToDefault(${editingDay})">Reset</button>
+    </div>
+
+    <div class="card">
+      <div class="section-label" style="margin-top:0">Exercises</div>
+      ${day.exercises.length === 0
+        ? `<div style="font-size:14px;color:var(--text-muted);padding:8px 0">No exercises — add one below</div>`
+        : day.exercises.map((ex, i) => `
+          <div class="edit-ex-row">
+            <div class="edit-ex-info">
+              <div class="edit-ex-name">${ex.name}</div>
+              <div class="edit-ex-meta">${ex.sets} sets × ${ex.reps}${ex.kind==='weighted'&&ex.defaultWeight?' · '+ex.defaultWeight+'kg':''} · ${ex.kind}</div>
+            </div>
+            <button class="delete-btn" onclick="deleteExercise(${editingDay},${i})">×</button>
+          </div>`).join('')}
+
+      <div id="add-ex-toggle" style="margin-top:14px">
+        <button class="btn btn-secondary w-full" onclick="toggleAddForm()">+ Add Exercise</button>
+      </div>
+
+      <div class="add-ex-form" id="add-ex-form">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px">New Exercise</div>
+        <div style="margin-bottom:8px">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input" id="new-name" placeholder="e.g. Dumbbell Curl" style="text-align:left;padding:10px 12px">
+        </div>
+        <div class="form-row">
+          <div>
+            <label class="form-label">Sets</label>
+            <input type="number" class="form-input" id="new-sets" value="3" min="1" inputmode="numeric">
+          </div>
+          <div>
+            <label class="form-label">Reps</label>
+            <input type="text" class="form-input" id="new-reps" value="10" placeholder="10 or max or 60s">
+          </div>
+        </div>
+        <div style="margin-bottom:8px">
+          <label class="form-label">Type</label>
+          <select class="form-select" id="new-kind" onchange="toggleWeightField()">
+            <option value="weighted">Weighted (barbell/dumbbell)</option>
+            <option value="bodyweight">Bodyweight</option>
+            <option value="timed">Timed (plank etc.)</option>
+          </select>
+        </div>
+        <div id="new-weight-row" style="margin-bottom:12px">
+          <label class="form-label">Default Weight (kg)</label>
+          <input type="number" class="form-input" id="new-weight" value="20" min="0" inputmode="decimal">
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="addExercise(${editingDay})" style="flex:1">Add</button>
+          <button class="btn btn-secondary" onclick="toggleAddForm()" style="flex:1">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleAddForm() {
+  const form = document.getElementById('add-ex-form');
+  form.classList.toggle('open');
+  const btn = document.getElementById('add-ex-toggle');
+  btn.style.display = form.classList.contains('open') ? 'none' : 'block';
+}
+
+function toggleWeightField() {
+  const kind = document.getElementById('new-kind')?.value;
+  const row  = document.getElementById('new-weight-row');
+  if (row) row.style.display = kind === 'weighted' ? 'block' : 'none';
+}
+
+function addExercise(dayIdx) {
+  const name   = document.getElementById('new-name')?.value.trim();
+  const sets   = parseInt(document.getElementById('new-sets')?.value) || 3;
+  const reps   = document.getElementById('new-reps')?.value.trim() || '10';
+  const kind   = document.getElementById('new-kind')?.value || 'weighted';
+  const weight = parseFloat(document.getElementById('new-weight')?.value) || 20;
+
+  if (!name) { showToast('Enter an exercise name'); return; }
+
+  const ex = { name, sets, reps, kind };
+  if (kind === 'weighted')  ex.defaultWeight = weight;
+  if (kind === 'timed')     ex.defaultDuration = parseInt(reps) || 60;
+
+  ensureCustomDays(editingProg);
+  S.customDays[editingProg][dayIdx].exercises.push(ex);
+  saveState();
+  showToast(`${name} added`);
+  render();
+}
+
+function deleteExercise(dayIdx, exIdx) {
+  const days = getDays(editingProg);
+  const name = days[dayIdx].exercises[exIdx].name;
+  if (!confirm(`Remove "${name}" from this day?`)) return;
+  ensureCustomDays(editingProg);
+  S.customDays[editingProg][dayIdx].exercises.splice(exIdx, 1);
+  saveState();
+  showToast(`${name} removed`);
+  render();
+}
+
+function resetDayToDefault(dayIdx) {
+  const defaultDay = PROGRAMMES[editingProg].days[dayIdx];
+  if (!confirm(`Reset "${defaultDay.name}" back to the original exercises?`)) return;
+  ensureCustomDays(editingProg);
+  S.customDays[editingProg][dayIdx].exercises = JSON.parse(JSON.stringify(defaultDay.exercises));
+  saveState();
+  showToast('Day reset to defaults');
+  render();
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
