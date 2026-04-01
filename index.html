@@ -226,23 +226,23 @@ const PROGRAMMES = {
       {
         name: 'Push A', focus: 'Chest Focus', type: 'push',
         exercises: [
-          { name: 'Barbell Bench Press',       sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 60,  note: 'Your current benchmark. Add 2.5kg when you hit 4×8 cleanly.' },
+          { name: 'Barbell Bench Press',       sets: 3, reps: '8',       kind: 'weighted',   defaultWeight: 60,  note: 'Your current benchmark. Add 2.5kg when you hit 3×8 cleanly.' },
           { name: 'Incline Dumbbell Press',    sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 20 },
-          { name: 'Dumbbell Lateral Raises',   sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 8,   note: 'Key for shoulder width — slow and controlled.' },
-          { name: 'Overhead Press Machine',    sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 25 },
-          { name: 'Tricep Rope Pushdown',      sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 20 },
-          { name: 'Overhead Tricep Extension', sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 15 },
+          { name: 'Cable Lateral Raises',      sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 8,   note: 'Key for shoulder width — slow and controlled + Keep tension.' },
+          { name: 'Overhead Press Machine',    sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 10 },
+          { name: 'Tricep Rope Pushdown',      sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 20 },
+          { name: 'Overhead Tricep Extension', sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 15 },
         ]
       },
       {
         name: 'Pull A', focus: 'Back Width & Pull-ups', type: 'pull',
         exercises: [
-          { name: 'Pull-ups',                  sets: 4, reps: 'max',     kind: 'bodyweight', note: 'Currently 8 clean reps — aim to add 1 rep per cycle.' },
+          { name: 'Pull-ups',                  sets: 3, reps: 'max',     kind: 'bodyweight', note: 'Currently 8 clean reps — aim to add 1 rep per cycle.' },
           { name: 'Lat Pulldown',              sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 50 },
           { name: 'Seated Cable Row',          sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 45 },
           { name: 'Face Pulls',                sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 20, note: 'Protects shoulder health and builds rear delts.' },
-          { name: 'Barbell Curl',              sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 25 },
-          { name: 'Hammer Curls',              sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 10 },
+          { name: 'Behind back cable curl',    sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 25 },
+          { name: 'Preacher Curls',            sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 10 },
         ]
       },
       {
@@ -254,25 +254,25 @@ const PROGRAMMES = {
           { name: 'Romanian Deadlift',         sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 50 },
           { name: 'Calf Raises',               sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 60 },
           { name: 'Hanging Leg Raises',        sets: 3, reps: '15',      kind: 'bodyweight', note: 'Keep legs straight for full core engagement.' },
-          { name: 'Plank',                     sets: 3, reps: '60s',     kind: 'timed',      defaultDuration: 60 },
           { name: 'Cable Crunch',              sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 25 },
         ]
       },
       {
         name: 'Push B', focus: 'Shoulder Focus', type: 'push',
         exercises: [
-          { name: 'Barbell Overhead Press',    sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 40,  note: 'Primary shoulder mass builder. Drive this up over time.' },
-          { name: 'Incline Barbell Press',     sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 50 },
-          { name: 'Dumbbell Lateral Raises',   sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 8 },
-          { name: 'Cable Lateral Raises',      sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 10, note: 'Constant tension — great for the final pump.' },
+          { name: 'Barbell Bench Press',       sets: 3, reps: '8',       kind: 'weighted',   defaultWeight: 60,  note: 'Your current benchmark. Add 2.5kg when you hit 3×8 cleanly.' },
+          { name: 'Incline Dumbbell Press',    sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 20 },
+          { name: 'Cable Lateral Raises',      sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 8,   note: 'Key for shoulder width — slow and controlled + Keep tension.' },
+          { name: 'Overhead Press Machine',    sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 25 },
           { name: 'Dumbbell Front Raises',     sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 8 },
+          { name: 'Tricep Rope Pushdown',      sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 20 },
           { name: 'Tricep Dips',               sets: 3, reps: '12',      kind: 'bodyweight' },
         ]
       },
       {
         name: 'Pull B', focus: 'Back Thickness', type: 'pull',
         exercises: [
-          { name: 'Barbell Row',               sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 50,  note: 'Keep back flat, pull to lower chest.' },
+          { name: 'Barbell Row',               sets: 3, reps: '8',       kind: 'weighted',   defaultWeight: 50,  note: 'Keep back flat, pull to lower chest.' },
           { name: 'Seated Cable Row',          sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 45 },
           { name: 'Wide Grip Lat Pulldown',    sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 50 },
           { name: 'Rear Delt Flies',           sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 10, note: 'Essential for rounded, broad shoulders.' },
@@ -283,12 +283,11 @@ const PROGRAMMES = {
       {
         name: 'Legs B', focus: 'Posterior Chain + Abs', type: 'legs',
         exercises: [
-          { name: 'Romanian Deadlift',         sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 60,  note: 'Feel the hamstring stretch at the bottom — control the descent.' },
+          { name: 'Romanian Deadlift',         sets: 3, reps: '8',       kind: 'weighted',   defaultWeight: 60,  note: 'Feel the hamstring stretch at the bottom — control the descent.' },
           { name: 'Bulgarian Split Squat',     sets: 3, reps: '10 each', kind: 'weighted',   defaultWeight: 16,  note: 'Hard but highly effective — best single-leg exercise.' },
           { name: 'Leg Curl',                  sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 40 },
           { name: 'Leg Press',                 sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 100 },
-          { name: 'Standing Calf Raises',      sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 60 },
-          { name: 'Ab Wheel Rollout',          sets: 3, reps: '10',      kind: 'bodyweight', note: 'Go slow — one of the best core exercises.' },
+          { name: 'Standing Calf Raises',      sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 60 },
           { name: 'Decline Sit-ups',           sets: 3, reps: '15',      kind: 'bodyweight' },
           { name: 'Russian Twists',            sets: 3, reps: '20 total',kind: 'bodyweight' },
         ]
@@ -302,10 +301,10 @@ const PROGRAMMES = {
       {
         name: 'Push', focus: 'Chest & Shoulders', type: 'push',
         exercises: [
-          { name: 'Barbell Bench Press',       sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 60 },
-          { name: 'Barbell Overhead Press',    sets: 3, reps: '8',       kind: 'weighted',   defaultWeight: 40 },
+          { name: 'Barbell Bench Press',       sets: 3, reps: '8',       kind: 'weighted',   defaultWeight: 60 },
           { name: 'Incline Dumbbell Press',    sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 20 },
-          { name: 'Dumbbell Lateral Raises',   sets: 4, reps: '15',      kind: 'weighted',   defaultWeight: 8 },
+          { name: 'Overhead Press Machine',    sets: 3, reps: '8',       kind: 'weighted',   defaultWeight: 10 },
+          { name: 'Cable Lateral Raises',      sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 8 },
           { name: 'Tricep Pushdown',           sets: 3, reps: '12',      kind: 'weighted',   defaultWeight: 20 },
         ]
       },
@@ -313,10 +312,10 @@ const PROGRAMMES = {
         name: 'Pull', focus: 'Back & Biceps', type: 'pull',
         exercises: [
           { name: 'Pull-ups',                  sets: 4, reps: 'max',     kind: 'bodyweight' },
-          { name: 'Barbell Row',               sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 50 },
+          { name: 'Seated Machine Row',        sets: 4, reps: '8',       kind: 'weighted',   defaultWeight: 50 },
           { name: 'Lat Pulldown',              sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 50 },
           { name: 'Face Pulls',                sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 20 },
-          { name: 'Barbell Curl',              sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 25 },
+          { name: 'Behind back cable curl',    sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 25 },
         ]
       },
       {
@@ -338,7 +337,7 @@ const PROGRAMMES = {
           { name: 'Incline Bench Press',       sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 50 },
           { name: 'Seated Cable Row',          sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 45 },
           { name: 'Dumbbell Lateral Raises',   sets: 3, reps: '15',      kind: 'weighted',   defaultWeight: 8 },
-          { name: 'Barbell Curl',              sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 25 },
+          { name: 'Behind back cable curl',    sets: 3, reps: '10',      kind: 'weighted',   defaultWeight: 25 },
         ]
       },
     ]
