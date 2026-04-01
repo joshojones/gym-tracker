@@ -407,23 +407,19 @@ function mkDefault() {
 }
 
 let S = getState();
-// Ensure customDays exists on old saves
 if (!S.customDays) S.customDays = {};
 
 let currentView = 'today';
-let editingProg = null;   // which programme key is being edited
-let editingDay  = null;   // which day index is being edited
+let editingProg = null;
+let editingDay  = null;
 let restInterval = null;
 let restSecs = 0;
 
-// Returns the days array for the current (or given) programme,
-// using custom overrides if the user has made any edits.
 function getDays(progKey) {
   const k = progKey || S.programme;
   return S.customDays[k] || PROGRAMMES[k].days;
 }
 
-// Deep-copy the default days into customDays so edits don't touch the defaults
 function ensureCustomDays(progKey) {
   if (!S.customDays[progKey]) {
     S.customDays[progKey] = JSON.parse(JSON.stringify(PROGRAMMES[progKey].days));
@@ -630,7 +626,7 @@ function logSet(exIdx) {
 
   S.activeSession.exercises[exIdx].push(setData);
   saveState();
-  startRestTimer(170);
+  startRestTimer(180);
   showToast('Set logged!');
 
   const newLogged = S.activeSession.exercises[exIdx];
@@ -677,14 +673,18 @@ function startRestTimer(secs) {
   if (!el) {
     el = document.createElement('div');
     el.id = 'rest-timer'; el.className = 'rest-timer';
-    el.innerHTML = `<div><div class="timer-label">Rest</div><div class="timer-display" id="timer-disp">1:30</div></div>
+    el.innerHTML = `<div><div class="timer-label">Rest</div><div class="timer-display" id="timer-disp">3:00</div></div>
       <button class="btn btn-secondary btn-sm" onclick="stopRestTimer()">Done</button>`;
     document.body.appendChild(el);
   }
   el.classList.remove('hidden'); updateTimerDisp();
   restInterval = setInterval(() => {
     restSecs--; updateTimerDisp();
-    if (restSecs <= 0) { stopRestTimer(); showToast('Rest done — next set!'); }
+    if (restSecs <= 0) {
+      stopRestTimer();
+      showToast('Rest done — next set!');
+      sendNotif('Rest Over', 'Time for your next set!');
+    }
   }, 1000);
 }
 
@@ -713,7 +713,6 @@ function renderHistory() {
   return [...S.sessions].reverse().map((s, ri) => {
     const idx  = S.sessions.length - 1 - ri;
     const sets = (s.exercises||[]).reduce((a,e)=>a+(e.sets?e.sets.length:0),0);
-    const prog = PROGRAMMES[s.programme] || PROGRAMMES.main;
     const days = getDays(s.programme);
     const day  = days[s.dayIndex % days.length];
     return `
@@ -1088,8 +1087,23 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+// ─── NOTIFICATIONS ───────────────────────────────────────────────────────────
+
+function requestNotifPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function sendNotif(title, body) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(title, { body });
+  }
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 
+requestNotifPermission();
 render();
 </script>
 </body>
